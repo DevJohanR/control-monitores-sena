@@ -1,0 +1,148 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelos:
+
+model Instructor {
+  id        Int               @id @default(autoincrement())
+  nombre    String
+  email     String            @unique
+  password  String
+  horarios  HorarioInstructor[]
+  fichas    InstructorFicha[]
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+}
+
+model Materia {
+  id     Int      @id @default(autoincrement())
+  nombre String
+  fichas Ficha[]
+  horariosFicha HorarioFicha[] // Relación inversa para HorarioFicha
+}
+
+model Ficha {
+  id                Int                    @id @default(autoincrement())
+  numeroFicha       String
+  idMateria         Int
+  materia           Materia                @relation(fields: [idMateria], references: [id])
+  horariosFicha     HorarioFicha[]
+  diasSemana        FichaDiaSemana[]
+  resultados        FichaResultadoAprendizaje[]
+  ambienteFicha     FichaAmbiente[]
+  instructorFichas  InstructorFicha[]
+  horariosInstructor HorarioInstructor[]   // Relación inversa para HorarioInstructor
+}
+
+model FichaDiaSemana {
+  id       Int    @id @default(autoincrement())
+  idFicha  Int
+  diaSemana String
+  ficha    Ficha  @relation(fields: [idFicha], references: [id])
+}
+
+model Ambiente {
+  id        Int                @id @default(autoincrement())
+  nombre    String
+  bloque    String
+  sede      String
+  horarios  HorarioAmbiente[]
+  fichas    FichaAmbiente[]
+  horariosInstructor HorarioInstructor[]   // Relación inversa para HorarioInstructor
+}
+
+
+model HorarioInstructor {
+  id          Int        @id @default(autoincrement())
+  idInstructor Int
+  idFicha      Int
+  idAmbiente   Int
+  jornada      String
+  diaSemana    String
+  horaInicio   String
+  horaFin      String
+  instructor   Instructor @relation(fields: [idInstructor], references: [id])
+  ficha        Ficha      @relation(fields: [idFicha], references: [id])
+  ambiente     Ambiente   @relation(fields: [idAmbiente], references: [id])
+}
+
+
+model HorarioFicha {
+  id         Int    @id @default(autoincrement())
+  idFicha    Int
+  jornada    String
+  diaSemana  String
+  horaInicio String
+  horaFin    String
+  idMateria  Int
+  materia    Materia @relation(fields: [idMateria], references: [id])
+  ficha      Ficha   @relation(fields: [idFicha], references: [id])
+}
+
+model HorarioAmbiente {
+  id         Int      @id @default(autoincrement())
+  idAmbiente Int
+  jornada    String
+  diaSemana  String
+  horaInicio String
+  horaFin    String
+  ambiente   Ambiente @relation(fields: [idAmbiente], references: [id])
+}
+
+model InstructorFicha {
+  id           Int        @id @default(autoincrement())
+  idInstructor Int
+  idFicha      Int
+  instructor   Instructor @relation(fields: [idInstructor], references: [id])
+  ficha        Ficha      @relation(fields: [idFicha], references: [id])
+}
+
+model FichaAmbiente {
+  id         Int      @id @default(autoincrement())
+  idFicha    Int
+  idAmbiente Int
+  ficha      Ficha    @relation(fields: [idFicha], references: [id])
+  ambiente   Ambiente @relation(fields: [idAmbiente], references: [id])
+}
+
+model FichaResultadoAprendizaje {
+  id          Int                @id @default(autoincrement())
+  idFicha     Int
+  idResultado Int
+  ficha       Ficha              @relation(fields: [idFicha], references: [id])
+  resultado   ResultadoAprendizaje @relation(fields: [idResultado], references: [id])
+}
+
+model ResultadoAprendizaje {
+  id          Int    @id @default(autoincrement())
+  descripcion String
+  fichas      FichaResultadoAprendizaje[]
+}
+
+model Usuario {
+  id       Int      @id @default(autoincrement())
+  email    String   @unique
+  password String
+  rol      Rol
+}
+
+model Trimestre {
+  id               Int      @id @default(autoincrement())
+  trimestre        String
+  ano              Int
+  datosInstructores Json
+  datosFichas      Json
+}
+
+enum Rol {
+  INSTRUCTOR
+  ADMINISTRADOR
+}

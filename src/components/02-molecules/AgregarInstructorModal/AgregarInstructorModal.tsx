@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Modal from '../Modal/Modal';
 import DynamicForm from '../DynamicForm/DynamicForm';
 import Button from '@/components/01-atoms/Button/Button';
+import { toast } from 'react-toastify';
 
 interface AgregarInstructorModalProps {
   fields: { name: string; label: string; type: string; placeholder?: string }[];
@@ -11,14 +12,44 @@ interface AgregarInstructorModalProps {
 
 export default function AgregarInstructorModal({ fields }: AgregarInstructorModalProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
-  const handleSubmit = (data: Record<string, string>) => {
-    console.log('Formulario enviado:', data);
-    // Aquí puedes manejar el envío del formulario (API call, etc.)
-    handleCloseModal(); // Cierra el modal después de enviar
+  const handleSubmit = async (data: Record<string, string>) => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/instructors', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al agregar el instructor. Verifica los datos e intenta nuevamente.');
+      }
+
+      const result = await response.json();
+      console.log('Instructor agregado con éxito:', result);
+
+      // Mostrar notificación de éxito usando react-toastify
+      toast.success('Instructor agregado con éxito.');
+
+      handleCloseModal();
+    } catch (error) {
+      console.error('Error:', error);
+      // Mostrar notificación de error usando react-toastify
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : 'Error inesperado al agregar el instructor. Intenta nuevamente.'
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -31,6 +62,7 @@ export default function AgregarInstructorModal({ fields }: AgregarInstructorModa
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <h2 className="text-xl font-semibold mb-4">Nuevo Instructor</h2>
         <DynamicForm fields={fields} onSubmit={handleSubmit} />
+        {loading && <p>Cargando...</p>}
       </Modal>
     </div>
   );

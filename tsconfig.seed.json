@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+      "lib": ["esnext"],
+      "allowJs": true,
+      "esModuleInterop": true,
+      "module": "CommonJS",
+      "target": "ES6",
+      "skipLibCheck": true,
+      "strict": true
+    },
+    "include": ["prisma/seed.ts"],
+    "exclude": ["node_modules"]
+  }
+  
