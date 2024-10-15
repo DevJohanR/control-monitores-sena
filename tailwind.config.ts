@@ -14,6 +14,7 @@ const config: Config = {
       },
       boxShadow: {
         'custom-inset': 'inset 0px 4px 8px rgba(0, 0, 0, 0.2)',
+        'footer-top-shadow': '0 -4px 8px rgba(0, 0, 0, 0.1)', 
       },
     },
   },

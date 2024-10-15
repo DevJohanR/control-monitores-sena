@@ -1,12 +1,10 @@
-// src/00-particles/icons/Icon.tsx
-
 import React from 'react';
-import { FaUser } from 'react-icons/fa';
+import { FaUser, FaPlus } from 'react-icons/fa';
 import { IoIosArrowForward, IoMdArrowDropdownCircle } from 'react-icons/io';
 import { IoHomeOutline } from 'react-icons/io5';
 
 // Definimos el tipo para los nombres de íconos disponibles
-export type IconName = 'user' | 'arrowForward' | 'arrowDropdown' | 'home';
+export type IconName = 'user' | 'arrowForward' | 'arrowDropdown' | 'home' | 'plus';
 
 interface IconProps {
   name: IconName;
@@ -20,6 +18,7 @@ const icons = {
   arrowForward: IoIosArrowForward,
   arrowDropdown: IoMdArrowDropdownCircle,
   home: IoHomeOutline,
+  plus: FaPlus,
 };
 
 export default function Icon({ name, size = '1em', className = '' }: IconProps) {
