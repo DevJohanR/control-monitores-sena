@@ -1,8 +1,39 @@
 // src/components/02-molecules/HorarioInstructor.tsx
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+
+interface Instructor {
+  id: number;
+  nombre: string;
+}
+
 
 export default function HorarioInstructor() {
+  const [instructores, setInstructores] = useState<Instructor[]>([]);
+  const [selectedInstructor, setSelectedInstructor] = useState<number | null>(null);
+
+
+  useEffect(() => {
+    const fetchInstructors = async () => {
+      try {
+        const response = await fetch('/api/instructors'); // Asegúrate de que la ruta coincide con la de tu API
+        const data = await response.json();
+        setInstructores(data);
+      } catch (error) {
+        console.error('Error al obtener los instructores:', error);
+      }
+    };
+
+    fetchInstructors();
+  }, []);
+
+
+
+  const handleInstructorChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedInstructor(Number(e.target.value));
+  };
+
+
   return (
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
@@ -14,7 +45,20 @@ export default function HorarioInstructor() {
         </div>
       </div>
       <div className="flex justify-start items-center mb-4">
-        <span className="text-sm font-medium">Instructor: Alfredo Bermejo</span>
+        <label htmlFor="instructor" className="text-sm font-medium mr-2">Instructor:</label>
+        <select
+          id="instructor"
+          value={selectedInstructor || ''}
+          onChange={handleInstructorChange}
+          className="border p-2 rounded"
+        >
+          <option value="" disabled>Selecciona un instructor</option>
+          {instructores.map((instructor) => (
+            <option key={instructor.id} value={instructor.id}>
+              {instructor.nombre}
+            </option>
+          ))}
+        </select>
       </div>
       <table className="w-full table-auto border-collapse border border-gray-300">
         <thead className="bg-gray-100">
