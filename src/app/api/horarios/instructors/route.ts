@@ -5,9 +5,10 @@ const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { jornada, diaSemana, horaInicio, horaFin, idInstructor, idFicha, idAmbiente } = body;
+  const { jornada, diaSemana, horaInicio, horaFin, idInstructor, idFicha, idAmbiente, idMateria } = body;
 
-  if (!jornada || !diaSemana || !horaInicio || !horaFin || !idInstructor || !idFicha || !idAmbiente) {
+  // Verificar que todos los campos necesarios sean proporcionados
+  if (!jornada || !diaSemana || !horaInicio || !horaFin || !idInstructor || !idFicha || !idAmbiente || !idMateria) {
     return NextResponse.json(
       { message: 'Todos los campos son obligatorios' },
       { status: 400 }
@@ -15,12 +16,12 @@ export async function POST(request: Request) {
   }
 
   try {
-    // Validar que no haya solapamientos
+    // Validar que no haya solapamientos para el horario del instructor
     const horariosConflictos = await prisma.horarioInstructor.findMany({
       where: {
-        diaSemana: diaSemana,
-        jornada: jornada,
-        idAmbiente: idAmbiente,
+        diaSemana,
+        jornada,
+        idAmbiente,
         OR: [
           {
             horaInicio: {
@@ -41,8 +42,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // Si no hay conflictos, proceder a crear el horario
-    const nuevoHorario = await prisma.horarioInstructor.create({
+    // Si no hay conflictos, proceder a crear el horario del instructor
+    const nuevoHorarioInstructor = await prisma.horarioInstructor.create({
       data: {
         jornada,
         diaSemana,
@@ -50,15 +51,44 @@ export async function POST(request: Request) {
         horaFin,
         ficha: { connect: { id: idFicha } },
         instructor: { connect: { id: idInstructor } },
-        ambiente: { connect: { id: idAmbiente } }
+        ambiente: { connect: { id: idAmbiente } },
       },
     });
 
-    return NextResponse.json(nuevoHorario, { status: 201 });
-  } catch (error) {
-    console.error(error);
+    // Crear automáticamente el horario para la ficha
+    const nuevoHorarioFicha = await prisma.horarioFicha.create({
+      data: {
+        jornada,
+        diaSemana,
+        horaInicio,
+        horaFin,
+        materia: { connect: { id: idMateria } },
+        ficha: { connect: { id: idFicha } },
+        instructor: idInstructor ? { connect: { id: idInstructor } } : undefined,
+        ambiente: idAmbiente ? { connect: { id: idAmbiente } } : undefined,
+      },
+    });
+
+    // Crear automáticamente el horario para el ambiente
+    const nuevoHorarioAmbiente = await prisma.horarioAmbiente.create({
+      data: {
+        jornada,
+        diaSemana,
+        horaInicio,
+        horaFin,
+        ambiente: { connect: { id: idAmbiente } },
+      },
+    });
+
+    // Devolver el resultado de los horarios creados
     return NextResponse.json(
-      { message: 'Error al agregar el horario. Inténtalo nuevamente.' },
+      { nuevoHorarioInstructor, nuevoHorarioFicha, nuevoHorarioAmbiente },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error('Error:', error);
+    return NextResponse.json(
+      { message: 'Error al agregar los horarios. Inténtalo nuevamente.' },
       { status: 500 }
     );
   }

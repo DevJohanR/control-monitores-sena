@@ -10,8 +10,8 @@ export default function Home() {
   return (
     <div>
      <Header/>
-     
-     <HomePage/>
+     <div className="mt-20">  <HomePage/></div>
+   
 
     <div className="mt-20">
     <Footer/>
