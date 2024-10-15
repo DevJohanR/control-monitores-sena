@@ -13,7 +13,10 @@ export default function Home() {
      
      <HomePage/>
 
-     <Footer/>
+    <div className="mt-20">
+    <Footer/>
+    </div>
+  
       </div>
 
       

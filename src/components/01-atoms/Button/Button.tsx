@@ -12,7 +12,7 @@ interface ButtonProps {
 export default function Button({ text, onClick, className = '', icon }: ButtonProps) {
   return (
     <button
-      className={`bg-slate-300 pl-5 pr-5 pt-2 pb-2 rounded-xl flex items-center space-x-2 ${className}`}
+      className={`bg-slate-300 text-[10px] pl-5 pr-5 pt-2 pb-2 rounded-xl flex items-center space-x-2 ${className}`}
       onClick={onClick}
     >
       {icon && <span>{icon}</span>} {/* Si icon está definido, lo renderiza */}

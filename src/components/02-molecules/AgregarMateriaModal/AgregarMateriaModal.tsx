@@ -3,6 +3,7 @@ import Modal from '../Modal/Modal';
 import DynamicForm from '../DynamicForm/DynamicForm';
 import Button from '@/components/01-atoms/Button/Button';
 import { toast } from 'react-toastify';
+import Icon from '@/components/00-particles/icons/Icon';
 
 interface AgregarMateriaModalProps {
   fields: { name: string; label: string; type: string; placeholder?: string }[];
@@ -53,9 +54,10 @@ export default function AgregarMateriaModal({ fields }: AgregarMateriaModalProps
   return (
     <div>
       <Button
-        text="Agregar Materia"
+        text="Materia"
         onClick={handleOpenModal}
-        className="bg-blue-500 text-white hover:bg-blue-700"
+        className="bg-slate-600 text-white hover:bg-blue-500"
+        icon={<Icon name="plus" />}
       />
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <h2 className="text-xl font-semibold mb-4">Nueva Materia</h2>

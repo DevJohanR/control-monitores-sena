@@ -56,7 +56,7 @@ export default function AgregarAmbienteModal({ fields }: AgregarAmbienteModalPro
       <Button
         text="Ambiente"
         onClick={handleOpenModal}
-        className="bg-green-500 text-white hover:bg-green-700"
+        className="bg-slate-600 text-white hover:bg-green-700"
         icon={<Icon name="plus" />}
       />
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>

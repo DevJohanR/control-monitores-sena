@@ -1,3 +1,4 @@
+import HorarioAmbiente from "@/components/02-molecules/HorarioAmbiente/HorarioAmbiente";
 import HorarioFicha from "@/components/02-molecules/HorarioFicha/HorarioFicha";
 import HorarioInstructor from "@/components/02-molecules/HorarioInstructor/HorarioInstructor";
 
@@ -9,6 +10,9 @@ export default function HomePage() {
       </div>
       <div>
         <HorarioFicha />
+      </div>
+      <div>
+        <HorarioAmbiente/>
       </div>
     </div>
   );
